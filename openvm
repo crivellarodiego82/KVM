@@ -1,0 +1,48 @@
+sudo apt update
+sudo apt install open-vm-tools
+
+# Sposta il file di OpenVM Tools per Windows in /tmp/
+mv /percorso/del/file/windows-openvm-tools.exe /tmp/
+
+# Se hai scaricato manualmente il pacchetto di OpenVM Tools per Linux, spostalo anche in /tmp/
+mv /percorso/del/file/linux-openvm-tools.tar.gz /tmp/
+
+#Batch Windows
+
+@echo off
+setlocal
+
+REM Assicurati di sostituire "windows-openvm-tools.exe" con il nome effettivo del file scaricato
+set INSTALLER_NAME=windows-openvm-tools.exe
+
+REM Esegui l'installer di OpenVM Tools in modalità silenziosa
+"%TEMP%\%INSTALLER_NAME%" /s /v"/qn REBOOT=R"
+
+if %ERRORLEVEL% EQU 0 (
+    echo Installazione completata con successo.
+) else (
+    echo Si è verificato un errore durante l'installazione di OpenVM Tools.
+)
+
+endlocal
+
+
+#Batch Linux
+
+#!/bin/bash
+
+# Assicurati di sostituire "linux-openvm-tools.tar.gz" con il nome effettivo del file scaricato
+TAR_FILE=/tmp/linux-openvm-tools.tar.gz
+
+# Estrarre il pacchetto di OpenVM Tools
+tar xf "$TAR_FILE" -C /tmp/
+
+# Accedi alla directory estratta
+cd /tmp/open-vm-tools-*/
+
+# Esegui il file di installazione
+sudo ./configure
+sudo make
+sudo make install
+
+echo "Installazione completata."

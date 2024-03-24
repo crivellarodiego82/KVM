@@ -1,0 +1,58 @@
+# Verifica della virtualizzazione hardware e dell'accelerazione hardware:
+egrep -c '(vmx|svm)' /proc/cpuinfo   # Verifica se la virtualizzazione hardware è supportata
+
+Se il risultato è superiore a 0, allora la virtualizzazione hardware è supportata. In caso contrario, potresti dover abilitare questa funzionalità nel BIOS/UEFI del tuo sistema.
+
+# Installazione di KVM:
+
+sudo apt update
+sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+sudo systemctl enable libvirtd
+sudo systemctl start libvirtd
+
+Creazione di una macchina virtuale:
+
+sudo virt-install \
+--name myvm \                       # Nome della macchina virtuale
+--memory 2048 \                     # Quantità di memoria (in MB)
+--vcpus 2 \                         # Numero di CPU virtuali
+--disk size=20 \                    # Dimensione del disco (in GB)
+--cdrom /path/to/ubuntu.iso \       # Percorso dell'immagine ISO del sistema operativo
+--os-variant ubuntu20.04 \          # Variante del sistema operativo
+--network network=default \         # Rete predefinita
+--graphics vnc \                    # Tipo di interfaccia grafica (VNC)
+--noautoconsole                    # Non aprire automaticamente la console
+
+# Avvio e gestione della macchina virtuale:
+sudo virsh start myvm
+
+# Se desideri gestire le tue macchine virtuali tramite un'interfaccia web:
+sudo apt update
+sudo apt install virt-manager
+virt-manager
+# Selezionare ip locale o remoto sistema di virtualizzazione
+
+#Docker:
+sudo apt-get remove docker docker-engine docker.io containerd runc
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+#Ubuntu 20.0x
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+sudo apt-get update
+# Per versioni recenti partire da qui
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+sudo docker --version
+
+Portainer:
+sudo docker run -d -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock portainer/portainer-ce
+http://<indirizzo_IP_del_server>:9000
+
+
+# Gestione Web:
+git clone https://github.com/oVirt/ovirt-engine
+cd ovirt-engine
+cp compose/docker-compose.yml.sample compose/docker-compose.yml
+# Modifica il file docker-compose.yml per configurare oVirt in base alle esigenze
+docker-compose up -d
+https://<indirizzo_IP_del_tuo_server>:443/ovirt-engine

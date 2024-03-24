@@ -4,7 +4,7 @@ qemu-img convert -f vmdk /percorso/disco.vmdk -O qcow2 /percorso/disco.qcow2
 #File di definizione XML per la macchina virtuale:
 virsh define /percorso/file_definizione.xml
 
-#Contenuto esempio file:
+# Contenuto esempio file Bridge:
 
 <domain type='kvm'>
   <name>windows10</name>
@@ -29,6 +29,45 @@ virsh define /percorso/file_definizione.xml
     <!-- Altri dispositivi come CD-ROM, controller USB, ecc. -->
   </devices>
 </domain>
+
+
+# Contenuto esempio VLAN:
+
+<domain type='kvm'>
+  <name>windows10</name>
+  <memory unit='KiB'>4194304</memory>
+  <currentMemory unit='KiB'>4194304</currentMemory>
+  <vcpu placement='static'>2</vcpu>
+  <os>
+    <type arch='x86_64' machine='pc-i440fx-5.1'>hvm</type>
+    <boot dev='hd'/>
+  </os>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/percorso/disco.qcow2'/> <!-- Assicurati di sostituire con il percorso del disco convertito in formato QCOW2 -->
+      <target dev='vda' bus='virtio'/>
+    </disk>
+    <!-- Rete per la prima VLAN -->
+    <interface type='network'>
+      <source network='vlan1'/>
+      <model type='virtio'/>
+    </interface>
+    <!-- Rete per la seconda VLAN -->
+    <interface type='network'>
+      <source network='vlan2'/>
+      <model type='virtio'/>
+    </interface>
+    <!-- Rete per la terza VLAN -->
+    <interface type='network'>
+      <source network='vlan3'/>
+      <model type='virtio'/>
+    </interface>
+    <!-- Altri dispositivi come CD-ROM, controller USB, ecc. -->
+  </devices>
+</domain>
+
 
 #Importazione macchina :
 virsh define /percorso/file_definizione.xml
